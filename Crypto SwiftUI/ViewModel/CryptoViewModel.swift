@@ -16,7 +16,7 @@ class CryptoViewModel : ObservableObject{
     init() {
         fetchCryptos()
     }
-    var topGainers: [Crypto] {
+    var topEarners: [Crypto] {
             crypto.sorted(by: { $0.priceChangePercentage24HInCurrency ?? 0 > $1.priceChangePercentage24HInCurrency ?? 0 })
         }
         

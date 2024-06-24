@@ -1,16 +1,8 @@
-//
-//  ContentView.swift
-//  Crypto SwiftUI
-//
-//  Created by Batuhan Berk Ertekin on 23.06.2024.
-//
-
 import SwiftUI
 
 struct HomeView: View {
     
     @ObservedObject private var cryptoViewModel = CryptoViewModel()
-    
     
     init() {
         let appearance = UINavigationBarAppearance()
@@ -23,7 +15,6 @@ struct HomeView: View {
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
         UINavigationBar.appearance().compactAppearance = appearance
-    
     }
     
     var body: some View {
@@ -34,12 +25,13 @@ struct HomeView: View {
                     Text("Top Earners")
                         .font(.title)
                         .fontWeight(.bold)
-                        .padding(.horizontal).foregroundColor(.blue)
+                        .padding(.horizontal)
+                        .foregroundColor(.blue)
                     
                     if !cryptoViewModel.crypto.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             LazyHStack(spacing: 20) {
-                                ForEach(cryptoViewModel.topGainers) { crypto in
+                                ForEach(cryptoViewModel.topEarners) { crypto in
                                     VStack {
                                         AsyncImage(url: URL(string: crypto.image)) { phase in
                                             switch phase {
@@ -66,7 +58,17 @@ struct HomeView: View {
                                         Text("\(crypto.symbol)")
                                             .font(.subheadline)
                                             .foregroundColor(.secondary)
-                                            .padding(.horizontal)
+                                        
+                                        if let changePercentage = crypto.priceChangePercentage24HInCurrency {
+                                            let formattedPercentage = String(format: "%.2f%%", changePercentage)
+                                            Text(formattedPercentage)
+                                                .font(.subheadline)
+                                                .foregroundColor(changePercentage >= 0 ? .green :  .red)
+                                        } else {
+                                            Text("N/A")
+                                                .font(.subheadline)
+                                                .foregroundColor(.gray)
+                                        }
                                     }
                                     .padding(.vertical, 8)
                                     .background(Color.gray.opacity(0.1))
@@ -75,7 +77,7 @@ struct HomeView: View {
                             }
                             .padding(.horizontal)
                         }
-                        .frame(height: 100)
+                        .frame(height: 150)
                     } else {
                         ProgressView()
                             .padding(.top, 20)
@@ -84,7 +86,8 @@ struct HomeView: View {
                     Text("All Coins")
                         .font(.title)
                         .fontWeight(.bold)
-                        .padding(.horizontal).foregroundColor(.blue)
+                        .padding(.horizontal)
+                        .foregroundColor(.blue)
                     
                     ForEach(cryptoViewModel.crypto) { crypto in
                         NavigationLink(destination: Text(crypto.name)) {
@@ -105,7 +108,7 @@ struct HomeView: View {
                                             .aspectRatio(contentMode: .fill)
                                             .frame(width: 50, height: 50)
                                             .cornerRadius(8)
-                                     default:
+                                    default:
                                         EmptyView()
                                     }
                                 }
@@ -156,3 +159,4 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
+
